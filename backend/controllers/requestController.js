@@ -23,7 +23,7 @@ exports.getRequestsByUser = async (req, res) => {
 exports.getAllRequests = async (req, res) => {
   try {
     const requests = await Request.find({})
-      .populate("userId", "name email, -_id")
+      .populate("userId", "name email -_id")
       .sort({ date: -1 });
     console.log(requests);
     res.status(200).json(requests);

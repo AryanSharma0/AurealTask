@@ -67,6 +67,7 @@ function Home() {
     setTimeout(() => getCertificate(request), 1000);
   };
 
+  console.log(requests);
   return (
     <div className="container mx-auto p-6 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
