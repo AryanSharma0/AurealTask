@@ -171,7 +171,7 @@ function Home() {
               {certificateAssignedDate}.
             </p>
             <img
-              src="../src/assets/certificate-preview.png"
+              src="https://github.com/AryanSharma0/Tutedude_Task/blob/main/frontend/src/assets/Screenshot%20from%202024-05-08%2019-06-54.png"
               alt="Certificate Preview"
               className="mt-4"
             />
