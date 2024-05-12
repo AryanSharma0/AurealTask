@@ -16,7 +16,7 @@ function Home() {
   const certificateWrapper = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/requests")
+    fetch("https://tutedude-task-iota.vercel.app/api/requests")
       .then((response) =>
         response.ok ? response.json() : Promise.reject("Failed to load")
       )
@@ -52,7 +52,7 @@ function Home() {
     );
 
     axios
-      .post("http://localhost:5000/api/certificates", data, {
+      .post("https://tutedude-task-iota.vercel.app/api/certificates", data, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) =>

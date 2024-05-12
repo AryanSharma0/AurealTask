@@ -4,6 +4,7 @@ import html2canvas from "html2canvas";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { RenderInput } from "../component/Input";
 
 function GenerateCertificate() {
   const [formData, setFormData] = useState({
@@ -15,12 +16,42 @@ function GenerateCertificate() {
   });
   const [loading, setLoading] = useState(false);
   const certificateWrapper = useRef(null);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = "Name is required";
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    if (!formData.course.trim()) {
+      errors.course = "Course is required";
+    }
+
+    if (!formData.password.trim()) {
+      errors.password = "Password is required";
+    }
+
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
+
   const downloadPdfDocument = async () => {
+    if (!validateForm()) {
+      return;
+    }
     setLoading(true);
     const input = certificateWrapper.current;
     html2canvas(input).then(async (canvas) => {
@@ -39,32 +70,28 @@ function GenerateCertificate() {
       data.append("password", formData.password);
       data.append("completion_date", formData.completion_date);
       data.append("file", blob, `${formData.name}_certificate.pdf`);
-      console.log(data.get("file"));
-      await axios
-        .post(
-          "http://localhost:5000/api/certificates/generateNewCertificateWithNewUser",
+      try {
+        await axios.post(
+          "https://tutedude-task-iota.vercel.app/api/certificates/generateNewCertificateWithNewUser",
           data,
           {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           }
-        )
-        .then(() => {
-          alert("File uploaded successfully");
-          setFormData({
-            name: "",
-            email: "",
-            course: "",
-            password: "",
-            completion_date: new Date().toLocaleDateString(),
-          });
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-          setLoading(false);
+        );
+        alert("File uploaded successfully");
+        setFormData({
+          name: "",
+          email: "",
+          course: "",
+          password: "",
+          completion_date: new Date().toLocaleDateString(),
         });
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+      setLoading(false);
     });
   };
 
@@ -104,50 +131,35 @@ function GenerateCertificate() {
           </div>
         ) : (
           <div className="space-y-4">
-            <label className="block">
-              <span className="text-gray-700">Name:</span>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="mt-1 p-2 outline-none focus:border-black focus:border-2 block w-full rounded-md border-gray-300 shadow-sm  focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter your name..."
-              />
-            </label>
-            <label className="block">
-              <span className="text-gray-700">Email:</span>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="mt-1 p-2 outline-none focus:border-black focus:border-2 block w-full rounded-md border-gray-300 shadow-sm  focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter your email..."
-              />
-            </label>
-            <label className="block">
-              <span className="text-gray-700">Course:</span>
-              <input
-                type="text"
-                name="course"
-                value={formData.course}
-                onChange={handleInputChange}
-                className="mt-1 p-2 outline-none focus:border-black focus:border-2 block w-full rounded-md border-gray-300 shadow-sm  focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter course name..."
-              />
-            </label>
-            <label className="block">
-              <span className="text-gray-700">Password:</span>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="mt-1 p-2 outline-none focus:border-black focus:border-2 block w-full rounded-md border-gray-300 shadow-sm  focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter your password..."
-              />
-            </label>
+            {RenderInput(
+              "Name",
+              "name",
+              formData.name,
+              handleInputChange,
+              errors.name
+            )}
+            {RenderInput(
+              "Email",
+              "email",
+              formData.email,
+              handleInputChange,
+              errors.email
+            )}
+            {RenderInput(
+              "Course",
+              "course",
+              formData.course,
+              handleInputChange,
+              errors.course
+            )}
+            {RenderInput(
+              "Password",
+              "password",
+              formData.password,
+              handleInputChange,
+              errors.password,
+              "password"
+            )}
             <button
               onClick={downloadPdfDocument}
               className="mt-4 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
