@@ -171,7 +171,7 @@ function GenerateCertificate() {
       </div>
       <div className="mt-20 h-fit w-fit relative" ref={certificateWrapper}>
         <img
-          src="../src/assets/Screenshot from 2024-05-08 19-06-54.png"
+          src="/Screenshot from 2024-05-08 19-06-54.png"
           alt="Certificate"
         />
         <div className="absolute h-full w-full top-0 text-[20px] font-bold text-slate-900 flex flex-col -mt-12  justify-center font-sans items-center">
